@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>01 - What is the DOM?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f5f7ff;
+      color: #1d2433;
+    }
+    .card {
+      max-width: 800px;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      margin: 0 auto;
+    }
+    h1 { color: #2a4d9b; }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: #2a4d9b;
+      color: white;
+      cursor: pointer;
+      margin: 8px 8px 8px 0;
+    }
+    .demo-box {
+      border: 2px dashed #8aa7ff;
+      padding: 20px;
+      margin-top: 16px;
+      background: #eef3ff;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>01. What is the DOM?</h1>
+    <p>The browser builds a tree of objects called the <strong>DOM</strong>.</p>
+
+    <div class="demo-box">
+      <h2 id="title">Hello</h2>
+      <p id="message">The DOM is a live map of the page.</p>
+    </div>
+
+    <button id="btnChange">Change Content</button>
+    <button id="btnReset">Reset</button>
+  </div>
+
+  <script>
+    const title = document.getElementById('title');
+    const message = document.getElementById('message');
+
+    document.getElementById('btnChange').addEventListener('click', () => {
+      title.textContent = 'DOM Updated!';
+      message.textContent = 'JavaScript changed the page without reloading.';
+      message.style.color = 'darkgreen';
+    });
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      title.textContent = 'Hello';
+      message.textContent = 'The DOM is a live map of the page.';
+      message.style.color = '#1d2433';
+    });
+  </script>
+</body>
+</html>

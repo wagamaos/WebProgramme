@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>06 - classList</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f3f6ff; padding: 30px; }
+    .card { max-width: 700px; margin: 0 auto; background: white; border-radius: 14px; padding: 24px; box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+    .box {
+      width: 220px; height: 120px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: #dfe8ff; color: #1d2d63; font-weight: bold; margin: 14px 0;
+      transition: all 0.3s ease;
+    }
+    .highlighted { background: #fff2a8; color: #745a00; }
+    .rounded { border-radius: 30px; }
+    .shadowed { box-shadow: 0 10px 25px rgba(0,0,0,0.18); }
+    .big { transform: scale(1.08); }
+    button { margin: 6px 8px 6px 0; border: none; border-radius: 8px; padding: 10px 15px; cursor: pointer; background: #5067d6; color: white; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>06. classList</h1>
+
+    <div class="box" id="demoBox">I am the demo box</div>
+
+    <button id="addBtn">add('highlighted')</button>
+    <button id="removeBtn">remove('highlighted')</button>
+    <button id="toggleBtn">toggle('rounded')</button>
+    <button id="toggleShadowBtn">toggle('shadowed')</button>
+    <button id="toggleBigBtn">toggle('big')</button>
+  </div>
+
+  <script>
+    const demoBox = document.getElementById('demoBox');
+
+    document.getElementById('addBtn').addEventListener('click', () => {
+      demoBox.classList.add('highlighted');
+    });
+
+    document.getElementById('removeBtn').addEventListener('click', () => {
+      demoBox.classList.remove('highlighted');
+    });
+
+    document.getElementById('toggleBtn').addEventListener('click', () => {
+      demoBox.classList.toggle('rounded');
+    });
+
+    document.getElementById('toggleShadowBtn').addEventListener('click', () => {
+      demoBox.classList.toggle('shadowed');
+    });
+
+    document.getElementById('toggleBigBtn').addEventListener('click', () => {
+      demoBox.classList.toggle('big');
+    });
+  </script>
+</body>
+</html>

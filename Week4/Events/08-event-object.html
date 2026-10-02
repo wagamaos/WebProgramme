@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>08 - Event Object</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f0ff; padding: 30px; }
+    .card { max-width: 700px; margin: 0 auto; background: white; padding: 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+    .btn-group { display: flex; gap: 12px; margin: 16px 0; }
+    button { background: #7a50db; color: white; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
+    #log { background: #f3ebff; padding: 12px; border-radius: 8px; min-height: 90px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>08. Event Object</h1>
+    <div class="btn-group">
+      <button id="btnA">Button A</button>
+      <button id="btnB">Button B</button>
+    </div>
+    <div id="log">Interact with the buttons above.</div>
+  </div>
+
+  <script>
+    const log = document.getElementById('log');
+
+    document.getElementById('btnA').addEventListener('click', (event) => {
+      log.textContent = `Event type: ${event.type} | Target id: ${event.target.id}`;
+    });
+
+    document.getElementById('btnB').addEventListener('click', (event) => {
+      log.textContent = `Event type: ${event.type} | Target id: ${event.target.id}`;
+    });
+
+    document.addEventListener('keydown', (event) => {
+      log.textContent = `Key pressed: ${event.key}`;
+    });
+  </script>
+</body>
+</html>

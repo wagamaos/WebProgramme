@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>02 - Selecting Elements</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f1ff; padding: 30px; }
+    .card {
+      max-width: 700px; margin: 0 auto; background: white; padding: 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+    }
+    #demoText { font-size: 24px; color: #5d2ce2; margin-bottom: 15px; }
+    button { padding: 10px 16px; margin-right: 10px; border: none; border-radius: 8px; cursor: pointer; }
+    .primary { background: #5d2ce2; color: white; }
+    .secondary { background: #e9e1ff; color: #2d1a5c; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>02. Selecting Elements</h1>
+    <p id="demoText">I am the element with id="demo02-text"</p>
+
+    <button class="primary" id="changeTextBtn">Change Text</button>
+    <button class="secondary" id="changeColorBtn">Change Color</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+
+  <script>
+    const demoText = document.getElementById('demoText');
+
+    document.getElementById('changeTextBtn').addEventListener('click', () => {
+      demoText.textContent = 'Text updated with getElementById()';
+    });
+
+    document.getElementById('changeColorBtn').addEventListener('click', () => {
+      demoText.style.color = 'darkgreen';
+      demoText.style.fontWeight = 'bold';
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      demoText.textContent = 'I am the element with id="demo02-text"';
+      demoText.style.color = '#5d2ce2';
+      demoText.style.fontWeight = 'normal';
+    });
+  </script>
+</body>
+</html>

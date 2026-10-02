@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10 - Event Bubbling & Delegation</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #fff7ef; padding: 30px; }
+    .card { max-width: 700px; margin: 0 auto; background: white; border-radius: 12px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+    #list { list-style: none; padding: 0; }
+    #list li { margin: 8px 0; background: #fff0d9; padding: 10px; border-radius: 8px; }
+    .delete-btn { background: #d94747; color: white; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer; float: right; }
+    #info { margin-top: 12px; color: #8a4d00; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>10. Event Bubbling & Delegation</h1>
+    <ul id="list">
+      <li>Task 1 <button class="delete-btn">Delete</button></li>
+      <li>Task 2 <button class="delete-btn">Delete</button></li>
+      <li>Task 3 <button class="delete-btn">Delete</button></li>
+    </ul>
+    <div id="info">Click a delete button.</div>
+  </div>
+
+  <script>
+    const list = document.getElementById('list');
+    const info = document.getElementById('info');
+
+    list.addEventListener('click', (event) => {
+      const deleteButton = event.target.closest('.delete-btn');
+      if (deleteButton) {
+        deleteButton.parentElement.remove();
+        info.textContent = 'Item removed using event delegation.';
+      }
+    });
+  </script>
+</body>
+</html>

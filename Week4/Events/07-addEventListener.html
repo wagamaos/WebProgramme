@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>07 - addEventListener</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eef7ff; padding: 30px; }
+    .card { max-width: 600px; margin: 0 auto; background: white; padding: 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+    button { background: #1c7ed6; color: white; border: none; border-radius: 8px; padding: 12px 18px; cursor: pointer; }
+    #countDisplay { font-size: 24px; font-weight: bold; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>07. addEventListener</h1>
+    <button id="countBtn">Click me!</button>
+    <p>Click count: <span id="countDisplay">0</span></p>
+  </div>
+
+  <script>
+    let count = 0;
+    const countBtn = document.getElementById('countBtn');
+    const countDisplay = document.getElementById('countDisplay');
+
+    countBtn.addEventListener('click', () => {
+      count++;
+      countDisplay.textContent = count;
+    });
+  </script>
+</body>
+</html>

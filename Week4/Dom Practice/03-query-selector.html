@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>03 - querySelector & querySelectorAll</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eefaf3; padding: 30px; }
+    .card { max-width: 680px; margin: 0 auto; background: white; border-radius: 12px; padding: 24px; box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
+    .item { padding: 8px 0; border-bottom: 1px solid #dfeee5; }
+    button { background: #14854f; color: white; border: none; border-radius: 8px; padding: 10px 15px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>03. querySelector & querySelectorAll</h1>
+
+    <ul id="itemsList">
+      <li class="item">Apple</li>
+      <li class="item active">Banana</li>
+      <li class="item">Cherry</li>
+      <li class="item">Date</li>
+    </ul>
+
+    <button id="highlightBtn">Highlight Items</button>
+  </div>
+
+  <script>
+    const highlightBtn = document.getElementById('highlightBtn');
+
+    highlightBtn.addEventListener('click', () => {
+      const firstItem = document.querySelector('.item');
+      const allItems = document.querySelectorAll('.item');
+
+      firstItem.style.fontWeight = 'bold';
+      allItems.forEach((item) => {
+        item.style.color = '#0f6c3e';
+        item.style.background = '#ebfff3';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12 - Removing Elements</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #fff6f6; padding: 30px; }
+    .card { max-width: 700px; margin: 0 auto; background: white; border-radius: 12px; padding: 24px; box-shadow: 0 10px 26px rgba(0,0,0,0.08); }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; margin-bottom: 8px; background: #ffeaea; border-radius: 8px; }
+    button { background: #df4d4d; color: white; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>12. Removing Elements</h1>
+    <ul id="itemList">
+      <li>Item One <button class="remove-btn">Remove</button></li>
+      <li>Item Two <button class="remove-btn">Remove</button></li>
+      <li>Item Three <button class="remove-btn">Remove</button></li>
+    </ul>
+    <button id="restoreBtn">Restore Items</button>
+  </div>
+
+  <script>
+    const list = document.getElementById('itemList');
+    const restoreBtn = document.getElementById('restoreBtn');
+
+    list.addEventListener('click', (event) => {
+      if (event.target.matches('.remove-btn')) {
+        event.target.closest('li').remove();
+      }
+    });
+
+    restoreBtn.addEventListener('click', () => {
+      list.innerHTML = `
+        <li>Item One <button class="remove-btn">Remove</button></li>
+        <li>Item Two <button class="remove-btn">Remove</button></li>
+        <li>Item Three <button class="remove-btn">Remove</button></li>
+      `;
+    });
+  </script>
+</body>
+</html>

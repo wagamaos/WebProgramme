@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05 - innerHTML</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #fff0f1; padding: 30px; }
+    .card { max-width: 700px; margin: 0 auto; background: white; border-radius: 12px; padding: 24px; box-shadow: 0 12px 26px rgba(0,0,0,0.08); }
+    #safeBox, #dangerBox { min-height: 80px; padding: 16px; border-radius: 10px; margin-top: 14px; }
+    #safeBox { background: #ffe9ec; }
+    #dangerBox { background: #fff4b8; }
+    button { margin-top: 10px; background: #d93a5d; color: white; border: none; border-radius: 8px; padding: 10px 15px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>05. innerHTML</h1>
+
+    <h3>Safe HTML content</h3>
+    <div id="safeBox"><strong>Bold</strong> and <em>italic</em> text</div>
+    <button id="safeBtn">Set Safe HTML</button>
+
+    <h3>User Input Example</h3>
+    <div id="dangerBox">Type something in the prompt to see how risky innerHTML can be.</div>
+    <button id="dangerBtn">Try User Input</button>
+  </div>
+
+  <script>
+    document.getElementById('safeBtn').addEventListener('click', () => {
+      document.getElementById('safeBox').innerHTML = '<strong>Bold</strong> and <em>italic</em> text';
+    });
+
+    document.getElementById('dangerBtn').addEventListener('click', () => {
+      const userInput = prompt('Type something:');
+      if (userInput !== null) {
+        document.getElementById('dangerBox').innerHTML = userInput;
+      }
+    });
+  </script>
+</body>
+</html>
