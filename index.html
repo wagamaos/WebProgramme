@@ -3,59 +3,424 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DOM & Events Index</title>
+  <title>Web Programming – Weekly Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0e1a;
+      --sidebar:  #0f1325;
+      --surface:  #141829;
+      --border:   rgba(255,255,255,0.06);
+      --amber:    #f5a623;
+      --orange:   #ff6b2b;
+      --gold:     #ffd166;
+      --text:     #e8dfc8;
+      --muted:    #6e7494;
+      --radius:   10px;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #f3edff, #edf9ff);
-      margin: 0;
-      padding: 40px 20px;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
     }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: rgba(255,255,255,0.8);
-      border: 1px solid rgba(100,120,210,0.15);
-      border-radius: 18px;
-      box-shadow: 0 12px 28px rgba(17, 23, 39, 0.08);
-      padding: 24px 28px;
+
+    /* ── TOP BAR ── */
+    .topbar {
+      height: 54px;
+      background: var(--sidebar);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 10;
     }
-    h1 {
-      color: #2b2550;
-      margin-top: 0;
+    .topbar-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--amber), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.01em;
     }
-    ul {
-      line-height: 2;
-      padding-left: 20px;
+    .topbar-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
     }
-    a {
-      color: #2d5ada;
+    .topbar-breadcrumb {
+      margin-left: auto;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 400px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .topbar-breadcrumb span { color: var(--amber); }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 290px;
+      flex-shrink: 0;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(245,166,35,0.2) transparent;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(245,166,35,0.2); border-radius: 4px; }
+
+    /* ── WEEK GROUP ── */
+    .week-group { border-bottom: 1px solid var(--border); }
+
+    .week-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .week-label:hover { background: rgba(255,255,255,0.02); }
+
+    .week-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .badge-w2  { background: rgba(245,166,35,0.12);  color: #f5a623; border: 1px solid rgba(245,166,35,0.25); }
+    .badge-w3m { background: rgba(255,107,43,0.12);  color: #ff8c5a; border: 1px solid rgba(255,107,43,0.25); }
+    .badge-w3f { background: rgba(255,209,102,0.12); color: #ffd166; border: 1px solid rgba(255,209,102,0.25); }
+    .badge-w4  { background: rgba(255,107,43,0.18);  color: #ff6b2b; border: 1px solid rgba(255,107,43,0.35); }
+
+    .week-label h3 {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+    .chevron {
+      font-size: 0.7rem;
+      color: var(--muted);
+      transition: transform 0.2s;
+    }
+    .week-group.open .chevron { transform: rotate(90deg); }
+
+    .week-body { display: none; }
+    .week-group.open .week-body { display: block; }
+
+    /* ── SECTION ── */
+    .sec-title {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 16px 4px;
+    }
+
+    /* ── LINK ITEMS ── */
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px 7px 22px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--muted);
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
       text-decoration: none;
+    }
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(245,166,35,0.05);
+      border-left-color: rgba(245,166,35,0.3);
+    }
+    .nav-link.active {
+      color: var(--amber);
+      background: rgba(245,166,35,0.08);
+      border-left-color: var(--amber);
       font-weight: 600;
     }
-    a:hover {
-      text-decoration: underline;
+    .nav-link .num {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: inherit;
+      opacity: 0.6;
+      min-width: 22px;
+    }
+
+    /* ── VIEWER PANEL ── */
+    .viewer {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .viewer-placeholder {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: var(--muted);
+    }
+    .viewer-placeholder .icon {
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+    .viewer-placeholder p {
+      font-size: 0.88rem;
+    }
+    .viewer-placeholder .hint {
+      font-size: 0.75rem;
+      opacity: 0.5;
+    }
+
+    #content-frame {
+      flex: 1;
+      border: none;
+      display: none;
+      background: #fff;
+    }
+
+    .empty-msg {
+      padding: 10px 16px 14px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>DOM & Events Practice</h1>
-    <ul>
-      <li><a href="practice-exercises.html">Practice Exercises (custom version)</a></li>
-      <li><a href="../Dom Practice/01-dom.html">01 - What is the DOM?</a></li>
-      <li><a href="../Dom Practice/02-selecting-elements.html">02 - Selecting Elements</a></li>
-      <li><a href="../Dom Practice/03-query-selector.html">03 - querySelector & querySelectorAll</a></li>
-      <li><a href="../Dom Practice/06-classlist.html">06 - classList</a></li>
-      <li><a href="../Changing Content/04-textContent.html">04 - textContent</a></li>
-      <li><a href="../Changing Content/05-innerHTML.html">05 - innerHTML</a></li>
-      <li><a href="../Events/07-addEventListener.html">07 - addEventListener</a></li>
-      <li><a href="../Events/08-event-object.html">08 - Event Object</a></li>
-      <li><a href="../Events/09-preventDefault.html">09 - preventDefault</a></li>
-      <li><a href="../Dyanmic DOM/10-event-bubbling.html">10 - Event Bubbling & Delegation</a></li>
-      <li><a href="../Dyanmic DOM/11-create-element.html">11 - createElement & appendChild</a></li>
-      <li><a href="../Dyanmic DOM/12-remove-elements.html">12 - Removing Elements</a></li>
-    </ul>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">Web Programming</div>
+    <div class="topbar-sub">Weekly Notes</div>
+    <div class="topbar-breadcrumb" id="breadcrumb">
+      <span>←</span> Select a topic from the sidebar
+    </div>
   </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+
+      <!-- WEEK 2 -->
+      <div class="week-group" id="wg-2">
+        <div class="week-label" onclick="toggleWeek('wg-2')">
+          <span class="week-badge badge-w2">Week 2</span>
+          <h3>Getting Started</h3>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="week-body">
+          <p class="empty-msg">No files yet — check back soon.</p>
+        </div>
+      </div>
+
+      <!-- WEEK 3 Monday -->
+      <div class="week-group open" id="wg-3m">
+        <div class="week-label" onclick="toggleWeek('wg-3m')">
+          <span class="week-badge badge-w3m">Week 3 Mon</span>
+          <h3>CSS Fundamentals</h3>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="week-body">
+
+          <p class="sec-title">Topics 1–7 · Selectors</p>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 1 to 7/01-what-is-css.html', 'What Is CSS?')"><span class="num">01</span> What Is CSS?</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 1 to 7/02-three-ways-to-add-css.html', 'Three Ways to Add CSS')"><span class="num">02</span> Three Ways to Add CSS</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 1 to 7/03-css-syntax.html', 'CSS Syntax')"><span class="num">03</span> CSS Syntax</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 1 to 7/04-universal-selector.html', 'Universal Selector')"><span class="num">04</span> Universal Selector</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 1 to 7/05-id-selector.html', 'ID Selector')"><span class="num">05</span> ID Selector</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 1 to 7/06-class-selector.html', 'Class Selector')"><span class="num">06</span> Class Selector</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 1 to 7/07-type-element-selector.html', 'Type / Element Selector')"><span class="num">07</span> Type / Element Selector</a>
+
+          <p class="sec-title">Topics 8–12 · Colors</p>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 8 to 12/08-color-property.html', 'Color Property')"><span class="num">08</span> Color Property</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 8 to 12/09-background-color-property.html', 'Background Color')"><span class="num">09</span> Background Color</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 8 to 12/10-hex-color-codes.html', 'Hex Color Codes')"><span class="num">10</span> Hex Color Codes</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 8 to 12/11-rgb-color-values.html', 'RGB Color Values')"><span class="num">11</span> RGB Color Values</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 8 to 12/12-font-size-property.html', 'Font Size')"><span class="num">12</span> Font Size</a>
+
+          <p class="sec-title">Topics 13–18 · Text &amp; Box Model</p>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 13 - 18/13-font-weight-property.html', 'Font Weight')"><span class="num">13</span> Font Weight</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 13 - 18/14-font-style-property.html', 'Font Style')"><span class="num">14</span> Font Style</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 13 - 18/15-text-align-property.html', 'Text Align')"><span class="num">15</span> Text Align</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 13 - 18/16-box-model-padding.html', 'Box Model – Padding')"><span class="num">16</span> Box Model – Padding</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 13 - 18/17-box-model-margin.html', 'Box Model – Margin')"><span class="num">17</span> Box Model – Margin</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 13 - 18/18-box-model-width-calculation.html', 'Width Calculation')"><span class="num">18</span> Width Calculation</a>
+
+          <p class="sec-title">Topics 19–25 · Display &amp; Flex</p>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 19 - 25/19-display-block.html', 'Display – Block')"><span class="num">19</span> Display – Block</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 19 - 25/20-display-none.html', 'Display – None')"><span class="num">20</span> Display – None</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 19 - 25/21-display-flex.html', 'Display – Flex')"><span class="num">21</span> Display – Flex</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 19 - 25/22-css-specificity.html', 'CSS Specificity')"><span class="num">22</span> CSS Specificity</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 19 - 25/23-which-selector-wins.html', 'Which Selector Wins?')"><span class="num">23</span> Which Selector Wins?</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 19 - 25/24-css-comments.html', 'CSS Comments')"><span class="num">24</span> CSS Comments</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/Topic 19 - 25/25-putting-it-all-together.html', 'Putting It All Together')"><span class="num">25</span> Putting It All Together</a>
+
+          <p class="sec-title">Exercises</p>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/All Ex/e1.html', 'Exercise 1')"><span class="num">E1</span> Exercise 1</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/All Ex/e2.html', 'Exercise 2')"><span class="num">E2</span> Exercise 2</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/All Ex/e3.html', 'Exercise 3')"><span class="num">E3</span> Exercise 3</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/All Ex/e4.html', 'Exercise 4')"><span class="num">E4</span> Exercise 4</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/All Ex/e5.html', 'Exercise 5')"><span class="num">E5</span> Exercise 5</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/All Ex/e6.html', 'Exercise 6')"><span class="num">E6</span> Exercise 6</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/All Ex/e7.html', 'Exercise 7')"><span class="num">E7</span> Exercise 7</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-1 Monday/All Ex/e8.html', 'Exercise 8')"><span class="num">E8</span> Exercise 8</a>
+
+        </div>
+      </div>
+
+      <!-- WEEK 3 Friday -->
+      <div class="week-group" id="wg-3f">
+        <div class="week-label" onclick="toggleWeek('wg-3f')">
+          <span class="week-badge badge-w3f">Week 3 Fri</span>
+          <h3>Advanced CSS</h3>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="week-body">
+
+          <p class="sec-title">Topics 1–7 · Position &amp; Effects</p>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 1 to 7/01-position-static-relative.html', 'Position – Static & Relative')"><span class="num">01</span> Position – Static &amp; Relative</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 1 to 7/02-position-absolute.html', 'Position – Absolute')"><span class="num">02</span> Position – Absolute</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 1 to 7/03-position-fixed-sticky.html', 'Position – Fixed & Sticky')"><span class="num">03</span> Position – Fixed &amp; Sticky</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 1 to 7/04-z-index-overflow.html', 'Z-Index & Overflow')"><span class="num">04</span> Z-Index &amp; Overflow</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 1 to 7/05-pseudo-classes.html', 'Pseudo-Classes')"><span class="num">05</span> Pseudo-Classes</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 1 to 7/06-pseudo-elements.html', 'Pseudo-Elements')"><span class="num">06</span> Pseudo-Elements</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 1 to 7/07-css-transitions.html', 'CSS Transitions')"><span class="num">07</span> CSS Transitions</a>
+
+          <p class="sec-title">Topics 8–15 · Grid &amp; More</p>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 8 to 15/08-keyframes-animations.html', 'Keyframes & Animations')"><span class="num">08</span> Keyframes &amp; Animations</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 8 to 15/09-css-variables.html', 'CSS Variables')"><span class="num">09</span> CSS Variables</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 8 to 15/10-media-queries.html', 'Media Queries')"><span class="num">10</span> Media Queries</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 8 to 15/11-advanced-flexbox.html', 'Advanced Flexbox')"><span class="num">11</span> Advanced Flexbox</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 8 to 15/12-css-grid.html', 'CSS Grid')"><span class="num">12</span> CSS Grid</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 8 to 15/13-border-radius-box-shadow.html', 'Border Radius & Box Shadow')"><span class="num">13</span> Border Radius &amp; Box Shadow</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 8 to 15/14-inherit-keyword.html', 'Inherit Keyword')"><span class="num">14</span> Inherit Keyword</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/Topic 8 to 15/15-putting-it-all-together.html', 'Putting It All Together')"><span class="num">15</span> Putting It All Together</a>
+
+          <p class="sec-title">Exercises</p>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/All Ex/e1.html', 'Exercise 1')"><span class="num">E1</span> Exercise 1</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/All Ex/e2.html', 'Exercise 2')"><span class="num">E2</span> Exercise 2</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/All Ex/e3.html', 'Exercise 3')"><span class="num">E3</span> Exercise 3</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/All Ex/e4.html', 'Exercise 4')"><span class="num">E4</span> Exercise 4</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/All Ex/e5.html', 'Exercise 5')"><span class="num">E5</span> Exercise 5</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/All Ex/e6.html', 'Exercise 6')"><span class="num">E6</span> Exercise 6</a>
+          <a class="nav-link" onclick="load(this, 'Week 3/Week3-2 Friday/All Ex/e7.html', 'Exercise 7')"><span class="num">E7</span> Exercise 7</a>
+
+        </div>
+      </div>
+
+      <!-- WEEK 4 -->
+      <div class="week-group" id="wg-4">
+        <div class="week-label" onclick="toggleWeek('wg-4')">
+          <span class="week-badge badge-w4">Week 4</span>
+          <h3>DOM &amp; Events</h3>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="week-body">
+
+          <p class="sec-title">DOM Practice · Topics 1–3</p>
+          <a class="nav-link" onclick="load(this, 'Week4/Dom Practice/01-dom.html', 'What Is the DOM?')"><span class="num">01</span> What Is the DOM?</a>
+          <a class="nav-link" onclick="load(this, 'Week4/Dom Practice/02-selecting-elements.html', 'Selecting Elements')"><span class="num">02</span> Selecting Elements</a>
+          <a class="nav-link" onclick="load(this, 'Week4/Dom Practice/03-query-selector.html', 'querySelector & querySelectorAll')"><span class="num">03</span> querySelector &amp; querySelectorAll</a>
+
+          <p class="sec-title">Changing Content · Topics 4–6</p>
+          <a class="nav-link" onclick="load(this, 'Week4/Changing Content/04-textContent.html', 'textContent')"><span class="num">04</span> textContent</a>
+          <a class="nav-link" onclick="load(this, 'Week4/Changing Content/05-innerHTML.html', 'innerHTML')"><span class="num">05</span> innerHTML</a>
+          <a class="nav-link" onclick="load(this, 'Week4/Changing Content/06-classlist.html', 'classList')"><span class="num">06</span> classList</a>
+
+          <p class="sec-title">Events · Topics 7–9</p>
+          <a class="nav-link" onclick="load(this, 'Week4/Events/07-addEventListener.html', 'addEventListener')"><span class="num">07</span> addEventListener</a>
+          <a class="nav-link" onclick="load(this, 'Week4/Events/08-event-object.html', 'Event Object')"><span class="num">08</span> Event Object</a>
+          <a class="nav-link" onclick="load(this, 'Week4/Events/09-preventDefault.html', 'preventDefault')"><span class="num">09</span> preventDefault</a>
+
+          <p class="sec-title">Dynamic DOM · Topics 10–12</p>
+          <a class="nav-link" onclick="load(this, 'Week4/Dyanmic DOM/10-event-bubbling.html', 'Event Bubbling & Delegation')"><span class="num">10</span> Event Bubbling &amp; Delegation</a>
+          <a class="nav-link" onclick="load(this, 'Week4/Dyanmic DOM/11-create-element.html', 'createElement & appendChild')"><span class="num">11</span> createElement &amp; appendChild</a>
+          <a class="nav-link" onclick="load(this, 'Week4/Dyanmic DOM/12-remove-elements.html', 'Removing Elements')"><span class="num">12</span> Removing Elements</a>
+
+          <p class="sec-title">Exercises</p>
+          <a class="nav-link" onclick="load(this, 'Week4/All Exs/practice-exercises.html', 'Practice Exercises')"><span class="num">Ex</span> Practice Exercises</a>
+
+        </div>
+      </div>
+
+    </nav>
+
+    <!-- VIEWER PANEL -->
+    <div class="viewer">
+      <div class="viewer-placeholder" id="placeholder">
+        <div class="icon">📂</div>
+        <p>No file selected</p>
+        <p class="hint">Click any topic in the sidebar to view it here</p>
+      </div>
+      <iframe id="content-frame" title="Topic Viewer"></iframe>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleWeek(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('open');
+    }
+
+    let activeLink = null;
+
+    function load(linkEl, src, title) {
+      // Highlight active link
+      if (activeLink) activeLink.classList.remove('active');
+      linkEl.classList.add('active');
+      activeLink = linkEl;
+
+      // Update breadcrumb
+      document.getElementById('breadcrumb').innerHTML =
+        '<span>▶</span> ' + title;
+
+      // Show iframe, hide placeholder
+      const frame = document.getElementById('content-frame');
+      const placeholder = document.getElementById('placeholder');
+      placeholder.style.display = 'none';
+      frame.style.display = 'block';
+      frame.src = src;
+    }
+  </script>
+
 </body>
 </html>
