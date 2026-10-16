@@ -180,6 +180,7 @@
     .badge-w3m { background: #fce4ec; color: #e91e8c; border: 1.5px solid #f8bbd9; }
     .badge-w3f { background: #f3e5f5; color: #9c27b0; border: 1.5px solid #e1bee7; }
     .badge-w4  { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #c8e6c9; }
+    .badge-w7  { background: #dbeafe; color: #1d4ed8; border: 1.5px solid #bfdbfe; }
 
     .week-label h3 {
       font-size: 0.83rem;
@@ -308,6 +309,7 @@
     .pill-teal   { background: #d0f5f3; color: var(--teal); }
     .pill-purple { background: #ede9ff; color: var(--purple); }
     .pill-pink   { background: #fde8f0; color: var(--pink); }
+    .pill-blue   { background: #dbeafe; color: #1d4ed8; }
 
     #content-frame {
       flex: 1;
@@ -493,6 +495,21 @@
         </div>
       </div>
 
+      <!-- WEEK 7 -->
+      <div class="week-group" id="wg-7">
+        <div class="week-label" onclick="toggleWeek('wg-7')">
+          <span class="week-badge badge-w7">Week 7</span>
+          <h3>Fetch &amp; Async JS</h3>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="week-body">
+
+          <p class="sec-title">Task · Joke Fetcher</p>
+          <a class="nav-link" onclick="load(this, 'Week 7/Task.html', 'Random Joke Fetcher')"><span class="num">T1</span> Random Joke Fetcher</a>
+
+        </div>
+      </div>
+
     </nav>
 
     <!-- VIEWER PANEL -->
@@ -506,6 +523,7 @@
           <span class="pill pill-teal">Advanced CSS</span>
           <span class="pill pill-purple">DOM &amp; Events</span>
           <span class="pill pill-pink">Exercises</span>
+          <span class="pill pill-blue">Fetch &amp; Async</span>
         </div>
       </div>
       <iframe id="content-frame" title="Topic Viewer"></iframe>

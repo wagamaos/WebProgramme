@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Joke Fetcher</title>
+
+    <style>
+        :root {
+            --bg:        #f4f4f9;
+            --card:      #ffffff;
+            --primary:   #4f46e5;
+            --primary-h: #3730a3;
+            --text:      #333;
+            --muted:     #666;
+            --sub-bg:    #f9fafb;
+            --border:    #e5e7eb;
+            --danger:    #dc2626;
+            --success:   #16a34a;
+            --heart:     #ef4444;
+        }
+
+        [data-theme="dark"] {
+            --bg:      #0f0f1a;
+            --card:    #1a1a2e;
+            --primary: #818cf8;
+            --primary-h:#a5b4fc;
+            --text:    #e2e8f0;
+            --muted:   #94a3b8;
+            --sub-bg:  #16213e;
+            --border:  #2d2d4e;
+            --danger:  #f87171;
+            --success: #4ade80;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s, color 0.3s; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── TOP BAR ── */
+        .top-bar {
+            max-width: 700px;
+            margin: 0 auto 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
+
+        .theme-btn {
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        .theme-btn:hover { border-color: var(--primary); }
+
+        /* ── CONTAINER ── */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 28px;
+            background-color: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle { color: var(--muted); margin: 0 0 18px; font-size: 0.95rem; }
+
+        /* ── FILTER ROW ── */
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 99px;
+            border: 1.5px solid var(--border);
+            background: var(--sub-bg);
+            color: var(--text);
+            font-size: 0.82rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* ── ACTION ROW ── */
+        .action-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        button.primary-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        button.primary-btn:hover  { background-color: var(--primary-h); }
+        button.primary-btn:disabled { background-color: #999; cursor: not-allowed; }
+
+        button.sec-btn {
+            background: var(--sub-bg);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button.sec-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ── STATUS ── */
+        #loading { color: var(--muted); margin: 14px 0 0; font-size: 0.9rem; }
+        #error   { color: var(--danger); margin: 14px 0 0; font-size: 0.9rem; }
+
+        /* ── JOKE BOX ── */
+        .joke-box {
+            margin-top: 22px;
+            padding: 22px;
+            background-color: var(--sub-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: left;
+            position: relative;
+        }
+
+        .joke-category-badge {
+            position: absolute;
+            top: -11px;
+            left: 18px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 10px;
+            border-radius: 99px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .joke-box h2 { color: var(--primary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 4px; }
+        .joke-box p  { color: var(--text); line-height: 1.65; margin: 0 0 16px; font-size: 1rem; }
+        .joke-box p:last-child { margin-bottom: 0; }
+
+        /* punchline hidden by default */
+        #punchSection { display: none; }
+
+        #revealBtn {
+            background: none;
+            border: 1.5px dashed var(--primary);
+            color: var(--primary);
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+        #revealBtn:hover { background: var(--primary); color: #fff; }
+
+        /* ── REACTION ROW ── */
+        .reaction-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .react-btn {
+            background: var(--sub-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 99px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+        .react-btn:hover { border-color: var(--primary); }
+        .react-btn.liked  { background: #fff0f0; border-color: var(--heart); color: var(--heart); }
+        .react-btn.copied { background: #f0fff4; border-color: var(--success); color: var(--success); }
+
+        /* ── COUNTER BAR ── */
+        .counter-bar {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .counter-chip {
+            background: var(--sub-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .counter-chip strong { color: var(--primary); font-size: 1.1rem; display: block; }
+
+        /* ── HISTORY ── */
+        .history-section {
+            margin-top: 28px;
+            text-align: left;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-header h3 { margin: 0; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .clear-btn:hover { text-decoration: underline; }
+
+        #historyList { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+
+        .history-item {
+            background: var(--sub-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.85rem;
+            color: var(--text);
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .history-item:hover { border-color: var(--primary); }
+        .history-item .hi-cat  { font-size: 0.7rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+        .history-item .hi-setup { font-weight: 700; }
+        .history-item .hi-time  { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+        .history-item .hi-fav   { position: absolute; top: 10px; right: 12px; font-size: 1rem; }
+
+        .empty-history { color: var(--muted); font-size: 0.85rem; font-style: italic; padding: 10px 0; }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <h1>😂 Joke Fetcher</h1>
+        <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+    </div>
+
+    <div class="container">
+        <p class="subtitle">Click the button to get a random joke — or pick a category!</p>
+
+        <!-- CATEGORY FILTER -->
+        <div class="filter-row" id="filterRow">
+            <button class="filter-btn active" data-type="random" onclick="setCategory(this)">🎲 Any</button>
+            <button class="filter-btn" data-type="programming" onclick="setCategory(this)">💻 Programming</button>
+            <button class="filter-btn" data-type="general" onclick="setCategory(this)">😄 General</button>
+            <button class="filter-btn" data-type="knock-knock" onclick="setCategory(this)">🚪 Knock-Knock</button>
+            <button class="filter-btn" data-type="dad" onclick="setCategory(this)">👨 Dad</button>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="action-row">
+            <button class="primary-btn" id="loadButton" onclick="loadJoke()">Load Joke</button>
+            <button class="sec-btn" id="favBtn" onclick="toggleFavourite()" title="Save to favourites" hidden>⭐ Save</button>
+        </div>
+
+        <p id="loading" hidden>⏳ Fetching a joke…</p>
+        <p id="error"   hidden></p>
+
+        <!-- JOKE BOX -->
+        <div class="joke-box" id="jokeBox">
+            <span class="joke-category-badge" id="jokeCatBadge">?</span>
+
+            <h2>Setup</h2>
+            <p id="jokeSetup">Your joke will appear here.</p>
+
+            <button id="revealBtn" onclick="revealPunchline()" hidden>👀 Reveal Punchline</button>
+
+            <div id="punchSection">
+                <h2>Punchline</h2>
+                <p id="jokePunch">The punchline will appear here.</p>
+            </div>
+
+            <!-- REACTIONS -->
+            <div class="reaction-row" id="reactionRow" hidden>
+                <button class="react-btn" id="laughBtn" onclick="react('😂')">😂 <span id="laughCount">0</span></button>
+                <button class="react-btn" id="mehBtn"   onclick="react('😐')">😐 <span id="mehCount">0</span></button>
+                <button class="react-btn" id="badBtn"   onclick="react('😬')">😬 <span id="badCount">0</span></button>
+                <button class="react-btn copied" id="copyBtn" onclick="copyJoke()">📋 Copy</button>
+            </div>
+        </div>
+
+        <!-- COUNTER BAR -->
+        <div class="counter-bar">
+            <div class="counter-chip"><strong id="totalCount">0</strong>Jokes Loaded</div>
+            <div class="counter-chip"><strong id="favCount">0</strong>Favourites</div>
+            <div class="counter-chip"><strong id="reactTotal">0</strong>Reactions</div>
+        </div>
+
+        <!-- HISTORY -->
+        <div class="history-section">
+            <div class="history-header">
+                <h3>📜 Recent Jokes</h3>
+                <button class="clear-btn" onclick="clearHistory()">Clear All</button>
+            </div>
+            <ul id="historyList">
+                <li class="empty-history">No jokes loaded yet. Hit the button!</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        /* ── STATE ── */
+        let currentJoke   = null;
+        let selectedType  = 'random';
+        let reactions     = { '😂': 0, '😐': 0, '😬': 0 };
+        let history       = JSON.parse(localStorage.getItem('jokeHistory') || '[]');
+        let favourites    = JSON.parse(localStorage.getItem('jokeFavs')    || '[]');
+        let totalLoaded   = parseInt(localStorage.getItem('jokeTotal')     || '0');
+        let isDark        = localStorage.getItem('darkMode') === 'true';
+
+        /* ── INIT ── */
+        if (isDark) applyDark();
+        updateCounters();
+        renderHistory();
+
+        /* ── CATEGORY ── */
+        function setCategory(btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedType = btn.dataset.type;
+        }
+
+        /* ── FETCH JOKE ── */
+        async function loadJoke() {
+            const button    = document.getElementById('loadButton');
+            const loading   = document.getElementById('loading');
+            const errorEl   = document.getElementById('error');
+
+            // reset UI
+            loading.hidden  = false;
+            errorEl.hidden  = true;
+            button.disabled = true;
+            button.textContent = 'Loading…';
+            document.getElementById('revealBtn').hidden  = true;
+            document.getElementById('punchSection').style.display = 'none';
+            document.getElementById('reactionRow').hidden = true;
+            document.getElementById('favBtn').hidden = true;
+            document.getElementById('jokeSetup').textContent  = '';
+            document.getElementById('jokePunch').textContent  = '';
+
+            const endpoint = selectedType === 'random'
+                ? 'https://official-joke-api.appspot.com/random_joke'
+                : `https://official-joke-api.appspot.com/jokes/${selectedType}/random`;
+
+            try {
+                const res = await fetch(endpoint);
+                if (!res.ok) throw new Error('Bad response');
+
+                let data = await res.json();
+                // category endpoint returns an array
+                if (Array.isArray(data)) data = data[0];
+
+                currentJoke = data;
+
+                document.getElementById('jokeCatBadge').textContent = data.type || selectedType;
+                document.getElementById('jokeSetup').textContent    = data.setup;
+                document.getElementById('jokePunch').textContent    = data.punchline;
+
+                // Show reveal button
+                document.getElementById('revealBtn').hidden = false;
+
+                // Save to history
+                addToHistory(data);
+                totalLoaded++;
+                localStorage.setItem('jokeTotal', totalLoaded);
+                updateCounters();
+
+            } catch (err) {
+                errorEl.textContent = `⚠️ Couldn't load a joke. Please try again!`;
+                errorEl.hidden = false;
+                document.getElementById('jokeSetup').textContent = 'No joke available.';
+            } finally {
+                loading.hidden    = true;
+                button.disabled   = false;
+                button.textContent = 'Load Joke';
+            }
+        }
+
+        /* ── REVEAL PUNCHLINE ── */
+        function revealPunchline() {
+            document.getElementById('punchSection').style.display = 'block';
+            document.getElementById('revealBtn').hidden  = true;
+            document.getElementById('reactionRow').hidden = false;
+            document.getElementById('favBtn').hidden = false;
+        }
+
+        /* ── REACTIONS ── */
+        function react(emoji) {
+            reactions[emoji]++;
+            document.getElementById('laughCount').textContent = reactions['😂'];
+            document.getElementById('mehCount').textContent   = reactions['😐'];
+            document.getElementById('badCount').textContent   = reactions['😬'];
+            updateCounters();
+        }
+
+        /* ── COPY JOKE ── */
+        function copyJoke() {
+            if (!currentJoke) return;
+            const text = `Setup: ${currentJoke.setup}\nPunchline: ${currentJoke.punchline}`;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+            });
+        }
+
+        /* ── FAVOURITES ── */
+        function toggleFavourite() {
+            if (!currentJoke) return;
+            const id  = currentJoke.id;
+            const idx = favourites.findIndex(j => j.id === id);
+            const btn = document.getElementById('favBtn');
+
+            if (idx === -1) {
+                favourites.push(currentJoke);
+                btn.textContent = '⭐ Saved!';
+            } else {
+                favourites.splice(idx, 1);
+                btn.textContent = '⭐ Save';
+            }
+
+            localStorage.setItem('jokeFavs', JSON.stringify(favourites));
+            renderHistory();
+            updateCounters();
+        }
+
+        /* ── HISTORY ── */
+        function addToHistory(joke) {
+            const entry = { ...joke, timestamp: new Date().toLocaleTimeString(), isFav: false };
+            history.unshift(entry);
+            if (history.length > 10) history.pop();   // keep last 10
+            localStorage.setItem('jokeHistory', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            if (history.length === 0) {
+                list.innerHTML = '<li class="empty-history">No jokes loaded yet. Hit the button!</li>';
+                return;
+            }
+
+            list.innerHTML = history.map((j, i) => {
+                const isFav = favourites.some(f => f.id === j.id);
+                return `<li class="history-item" onclick="loadHistoryJoke(${i})" title="Click to reload">
+                    <div class="hi-cat">${j.type || '?'}</div>
+                    <div class="hi-setup">${escHtml(j.setup)}</div>
+                    <div class="hi-time">🕐 ${j.timestamp}</div>
+                    ${isFav ? '<span class="hi-fav">⭐</span>' : ''}
+                </li>`;
+            }).join('');
+        }
+
+        function loadHistoryJoke(index) {
+            const j = history[index];
+            currentJoke = j;
+            document.getElementById('jokeCatBadge').textContent   = j.type || '?';
+            document.getElementById('jokeSetup').textContent      = j.setup;
+            document.getElementById('jokePunch').textContent      = j.punchline;
+            document.getElementById('revealBtn').hidden  = false;
+            document.getElementById('punchSection').style.display = 'none';
+            document.getElementById('reactionRow').hidden = true;
+            document.getElementById('favBtn').hidden = false;
+            document.getElementById('error').hidden = true;
+        }
+
+        function clearHistory() {
+            history = [];
+            localStorage.removeItem('jokeHistory');
+            renderHistory();
+        }
+
+        /* ── COUNTERS ── */
+        function updateCounters() {
+            document.getElementById('totalCount').textContent  = totalLoaded;
+            document.getElementById('favCount').textContent    = favourites.length;
+            const total = Object.values(reactions).reduce((a, b) => a + b, 0);
+            document.getElementById('reactTotal').textContent  = total;
+        }
+
+        /* ── DARK MODE ── */
+        function toggleTheme() {
+            isDark = !isDark;
+            localStorage.setItem('darkMode', isDark);
+            isDark ? applyDark() : applyLight();
+        }
+
+        function applyDark() {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('themeToggle').textContent = '☀️ Light Mode';
+        }
+
+        function applyLight() {
+            document.documentElement.removeAttribute('data-theme');
+            document.getElementById('themeToggle').textContent = '🌙 Dark Mode';
+        }
+
+        /* ── KEYBOARD SHORTCUT ── */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !document.getElementById('loadButton').disabled) {
+                loadJoke();
+            }
+        });
+
+        /* ── UTILS ── */
+        function escHtml(str) {
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+    </script>
+</body>
+
+</html>
